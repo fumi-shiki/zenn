@@ -2,7 +2,7 @@
 
 This repository hosts my articles and books published on [Zenn.dev](https://zenn.dev/fumi_shiki).
 
-## �‍💻 Author: fumi-shiki
+##　Author: fumi-shiki
 
 **CEO / Independent AI Researcher (AI Native Gen)**
 
