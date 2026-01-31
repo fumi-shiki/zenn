@@ -53,7 +53,7 @@ M1 Air (16GB) で **Rust/CUDA** を限界までチューニングします。
 - **PC**: MacBook Air M1 (16GB / 512GB)
   → ここでRustとCUDA書いてます。重い処理走らせると、キーボードがホットプレートになります。
 - **スマホ**: 中古の iPhone X (3GB RAM)  
-  → これでLLM動かしてます。動くもんだね。
+  → これでSLM動かしてます。動くもんだね。
 - **予算**: 0円（切実）
 
 ---
@@ -64,7 +64,7 @@ M1 Air (16GB) で **Rust/CUDA** を限界までチューニングします。
 
 - **Research**: Perplexity で arXiv論文検索 (週20本実装)
   - **Obsidian Ecosystem**:
-    - **RAG**: 蓄積した知識をローカルLLMで検索・対話。
+    - **RAG**: 蓄積した知識をローカルSLMで検索・対話。
     - **Integration**: **Zotero** (論文管理) + **Longform** (執筆) + **Pandoc** (出力) で研究サイクルを完全自動化。
 - **Coding**: **Claude Code** + **Cursor** + **Antigravity**
 - **Design**: Figma
