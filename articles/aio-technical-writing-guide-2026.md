@@ -52,11 +52,80 @@ published: true
 
 **第7章**で実務への示唆と今後の課題をまとめます。
 
+## 1.4 全体フレームワーク
+
+本研究の全体像を以下に示します。
+
+```mermaid
+graph TB
+    subgraph "従来のSEO（1998-2024）"
+        A[人間読者のみ対象]
+        B[単一セクション設計]
+        C[可読性 vs SEO対策]
+    end
+
+    subgraph "AIO時代（2025-）"
+        D[人間 + AIエージェント]
+        E[人間/AI分離モデル]
+        F[二重最適化]
+    end
+
+    subgraph "実装手法"
+        G[FAQ設計]
+        H[診断フロー]
+        I[YAML構造化]
+    end
+
+    subgraph "実証研究"
+        J[Pew Research<br/>CTR -46.7%]
+        K[Princeton GEO<br/>引用率 +40%]
+        L[StructEval<br/>YAML/JSON優位性]
+    end
+
+    A --> D
+    B --> E
+    C --> F
+    E --> G
+    E --> H
+    E --> I
+    J --> E
+    K --> G
+    L --> I
+
+    style E fill:#e1f5ff
+    style F fill:#e1f5ff
+```
+
+**図1: AIO時代の技術文書設計フレームワーク**
+
 ---
 
 # 2. Background: AIOの時代背景と技術基盤
 
 ## 2.1 AI検索環境の変化: Zero-Click時代の到来
+
+```mermaid
+timeline
+    title SEOからAIOへのパラダイムシフト
+    section 従来のSEO時代
+        1998-2023 : Google検索全盛期
+                  : キーワード最適化
+                  : バックリンク戦略
+    section 転換期
+        2024.05 : AI Overviews導入
+                : CTR -46.7%
+                : ゼロクリック検索 56%
+    section AIO時代
+        2025.05 : ゼロクリック検索 69%
+                : GEO研究（引用率+40%）
+                : AI要約表示 83%
+    section 未来予測
+        2026末 : LLMクエリ70%が
+               : AIエージェント処理
+               : 構造化データ標準化
+```
+
+**図2: SEOからAIOへの進化タイムライン（2024-2026）**
 
 ### 2.1.1 Google AI Overviewsによるトラフィック影響
 
@@ -119,6 +188,48 @@ AIエージェントが自律的に行動できるよう、技術文書は以下
 # 3. Methodology: 人間/AI分離モデルの設計
 
 ## 3.1 設計原理
+
+```mermaid
+graph LR
+    subgraph "人間向けセクション"
+        H1[会話調の導入部]
+        H2[ストーリー性]
+        H3[FAQ設計]
+        H4[診断フロー]
+    end
+
+    subgraph "AI向けセクション"
+        A1[YAML構造化データ]
+        A2[測定可能な閾値]
+        A3[実行可能なコマンド]
+        A4[トラブルシューティング]
+    end
+
+    subgraph "分離手法"
+        M1[:::message ブロック]
+        M2[:::details ブロック]
+    end
+
+    subgraph "設計原則"
+        P1[完全性の原則]
+        P2[明示性の原則]
+        P3[独立性の原則]
+    end
+
+    H1 & H2 & H3 & H4 --> M1
+    A1 & A2 & A3 & A4 --> M2
+    M1 & M2 --> P1
+    M1 & M2 --> P2
+    H1 & A1 --> P3
+
+    style M1 fill:#ffe1e1
+    style M2 fill:#e1ffe1
+    style P1 fill:#e1f5ff
+    style P2 fill:#e1f5ff
+    style P3 fill:#e1f5ff
+```
+
+**図3: 人間/AI分離モデルのアーキテクチャ**
 
 ### 3.1.1 分離の必要性
 
@@ -293,6 +404,41 @@ Q: GitHub CopilotとClaude Codeどちらを使うべき？
 この設計は、第2.5節で述べたAIコードアシスタントのアーキテクチャ分岐において、**エージェント型AI（Claude Code）が複数ステップの診断を自律的に実行できる**という実証結果に基づいている。
 
 ### 3.3.2 診断フローの形式化
+
+```mermaid
+flowchart TD
+    Start([起動時間をチェック])
+
+    Start --> Check1{起動時間は?}
+    Check1 -->|10秒以下| Step2[ステップ2へ]
+    Check1 -->|10秒以上| Fix1[重い拡張機能を確認]
+
+    Fix1 --> Cmd1["Cmd+Shift+P →<br/>'Show Running Extensions'"]
+    Cmd1 --> Action1[1秒以上の拡張機能を無効化]
+    Action1 --> Step2
+
+    Step2 --> Check2{Git操作の<br/>フリーズは?}
+    Check2 -->|3秒以上| Fix2[Git統合をオフ]
+    Check2 -->|問題なし| Step3[ステップ3へ]
+
+    Fix2 --> Config1["git.enabled: false<br/>gitlens.enabled: false"]
+    Config1 --> Step3
+
+    Step3 --> Check3{TypeScript<br/>型チェックは?}
+    Check3 -->|遅い| Fix3[tsgo を有効化]
+    Check3 -->|問題なし| Complete([診断完了])
+
+    Fix3 --> Config2["typescript.experimental.useTsgo: true<br/>（7-10x高速化）"]
+    Config2 --> Complete
+
+    style Start fill:#e1f5ff
+    style Complete fill:#e1ffe1
+    style Fix1 fill:#ffe1e1
+    style Fix2 fill:#ffe1e1
+    style Fix3 fill:#ffe1e1
+```
+
+**図4: VSCode診断フローの形式化（実装例）**
 
 診断フローは、以下の形式で表現される:
 
@@ -635,6 +781,23 @@ troubleshooting:
 
 # 5. Comparative Analysis
 
+```mermaid
+quadrantChart
+    title フォーマット・モデル比較マトリクス
+    x-axis 低AI解析性 --> 高AI解析性
+    y-axis 低人間可読性 --> 高人間可読性
+    quadrant-1 理想領域
+    quadrant-2 AI最適化
+    quadrant-3 改善必要
+    quadrant-4 人間最適化
+    YAML（分離モデル）: [0.85, 0.80]
+    JSON（分離モデル）: [0.90, 0.50]
+    Markdown（統合モデル）: [0.30, 0.75]
+    YAML（統合モデル）: [0.70, 0.60]
+```
+
+**図5: フォーマット・モデル比較マトリクス（人間可読性 × AI解析性）**
+
 ## 5.1 フォーマット比較: YAML vs JSON vs Markdown
 
 構造化データのフォーマットとして、YAML、JSON、Markdownを比較しました。
@@ -751,6 +914,46 @@ Markdownは、以下の限界を持つ:
 # 6. Discussion
 
 ## 6.1 設計上のトレードオフ
+
+```mermaid
+graph TD
+    subgraph "統合モデル（従来）"
+        U1[単一セクション]
+        U2[情報の重複なし]
+        U3[保守性: 高]
+        U4[可読性 vs AI解析性<br/>のトレードオフ]
+    end
+
+    subgraph "分離モデル（提案手法）"
+        S1[人間向け + AI向け<br/>二重セクション]
+        S2[情報の重複あり]
+        S3[保守性: 低]
+        S4[可読性 & AI解析性<br/>両立]
+    end
+
+    subgraph "トレードオフの解決"
+        T1[学習コスト増加]
+        T2[品質向上]
+        T3[AI応答精度 +40%]
+        T4[保守コスト増加<br/>vs<br/>ユーザー価値増大]
+    end
+
+    U1 --> S1
+    U2 --> S2
+    U3 --> S3
+    U4 --> S4
+    S1 & S2 --> T1
+    S4 --> T2
+    T2 --> T3
+    S3 --> T4
+
+    style S4 fill:#e1ffe1
+    style T2 fill:#e1ffe1
+    style T3 fill:#e1ffe1
+    style U4 fill:#ffe1e1
+```
+
+**図6: 統合モデルと分離モデルのトレードオフ分析**
 
 ### 6.1.1 重複 vs 最適化
 

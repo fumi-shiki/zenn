@@ -1,6 +1,6 @@
 ---
 title: "【Cursor】重いAIエディタを軽くする7つの設定"
-emoji: "🚀"
+emoji: "⚡"
 type: "tech"
 topics: ["Cursor", "TypeScript", "Mac", "パフォーマンス", "AI"]
 published: true
