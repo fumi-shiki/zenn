@@ -24,7 +24,7 @@ CursorってAI補完が超便利なんですけど、M1 MacBook Air 16GBだと**
 
 ## 結論: どれくらい変わる？
 
-先に結果をお見せします。
+先に結果をお見せします。（M1 MacBook Air 16GB での実測値）
 
 | 指標 | Before | After |
 |------|--------|-------|
@@ -84,7 +84,7 @@ CursorでもVSCodeの拡張機能が使えるので、そのまま有効化で�
 
 **なんで速いの？**
 - 従来のtsserverはJavaScript（Node.js）→ シングルスレッド、GCが重い
-- tsgoはGo製のネイティブバイナリ → マルチスレッド、GCなし、メモリ効率◎
+- tsgoはGo製のネイティブバイナリ → マルチスレッド、コンパイル済みネイティブコード、メモリ効率◎
 
 ```json
 {
@@ -309,19 +309,6 @@ Composerって複数ファイルを一括編集できて便利なんですけど
 
 小さな修正なら Cmd+L で十分。Composer は本当に必要なときだけ使いましょう。
 
-### インデックスを絞る（.gitignore を尊重させる）
-
-```json
-{
-  // インデックス対象から除外
-  "cursor.general.ignoreGitIgnoredFiles": true
-}
-```
-
-Cursorって、デフォルトだと `.gitignore` を無視してインデックスしちゃうんですよ。
-
-`node_modules` とか、AIに渡す必要ないですよね。この設定で `.gitignore` を尊重させます。
-
 ### Background Agents は慎重に使う（重い）
 
 Background Agentsって便利なんですけど、リソース消費がエグいです。
@@ -343,7 +330,7 @@ Background Agentsはローカル環境に触らず、クラウド環境でリポ
 
 ### Cursor Tab が遅いときのトラブルシューティング
 
-**それでも遅い人は、この5ステップを試してください（89%のケースで直ります）:**
+**それでも遅い人は、この4ステップを試してください:**
 
 1. **HTTP/2を無効化**（前述）
 2. **キャッシュをクリア**:
@@ -506,14 +493,7 @@ Cursorって、デフォルトだとけっこう重いんですけど、設定�
 
 ### Q: メモリ使用量を減らすには？
 
-チャット履歴を定期的にクリアします:
-
-```bash
-# Cursorを終了してから実行
-rm -rf ~/Library/Application\ Support/Cursor/User/workspaceStorage/*/state.vscdb*
-```
-
-**メモリが2GBを超えたら再起動**がベストプラクティスです。
+上記「3. Cursor固有の最適化」のチャット履歴クリアを実行してください。**メモリが2GBを超えたら再起動**がベストプラクティスです。
 
 ### Q: .cursorignore と .gitignore の違いは？
 
@@ -529,90 +509,33 @@ Cursorはデフォルトで `.gitignore` を無視してインデックスしま
 
 ### Q: 企業プロキシ環境で Cursor Tab が遅い場合は？
 
-HTTP/2を無効化します:
-
-```json
-{
-  "cursor.general.disableHttp2": true
-}
-```
-
-診断ログで確認:
-```
-Cmd+Shift+P → "Cursor: Open Tab Logs"
-```
-
-- `200`: 正常
-- `429`: レート制限
-- `5xx`: サーバーエラー → HTTP/2を無効化
+上記「5. HTTP/2を無効化する」を参照してください。`Cmd+Shift+P` → `Cursor: Open Tab Logs` で診断ログも確認できます。
 
 ---
 
 ## Cursorが遅い場合の診断フロー
 
-**ステップ1: メモリ使用量をチェック**
-
-Activity Monitor で Cursor のメモリ使用量を確認:
-
-- **2GB以下** → ステップ2へ
-- **2GB以上** → チャット履歴をクリア + 再起動
-  ```bash
-  rm -rf ~/Library/Application\ Support/Cursor/User/workspaceStorage/*/state.vscdb*
-  ```
-
-**ステップ2: インデックス時間をチェック**
-
-プロジェクトを開いて、インデックス完了までの時間を測定:
-
-- **1分以内** → ステップ3へ
-- **1分以上** → `.cursorignore` を設定
-  - `node_modules`, `dist`, `build` を除外
-  - 効果: 5分 → 30秒
-
-**ステップ3: Git操作をチェック**
-
-ファイル保存時のフリーズを確認:
-
-- **3秒以上固まる** → Git統合をオフ
-  ```json
-  {
-    "git.enabled": false,
-    "gitlens.enabled": false
-  }
-  ```
-- **問題なし** → ステップ4へ
-
-**ステップ4: TypeScript型チェック**
-
-TypeScriptプロジェクトの場合:
-
-- **遅い** → tsgo を有効化（7-10x高速化）
-  ```json
-  {
-    "typescript.experimental.useTsgo": true
-  }
-  ```
-
-**ステップ5: 拡張機能をチェック**
-
-重複するAI拡張を確認:
-
-```
-Cmd+Shift+P → "Extensions: Show Installed Extensions"
+```mermaid
+graph TD
+    A["メモリ 2GB超？"] -->|はい| B["→ 3. チャット履歴クリア + 再起動"]
+    A -->|いいえ| C["インデックス 1分超？"]
+    B --> C
+    C -->|はい| D["→ 4. .cursorignore 設定"]
+    C -->|いいえ| E["保存時フリーズ？"]
+    D --> E
+    E -->|3秒以上| F["→ 1. Git統合をオフ"]
+    E -->|問題なし| G["TS型チェック遅い？"]
+    F --> G
+    G -->|遅い| H["→ 2. tsgo 有効化"]
+    G -->|問題なし| I["Tab補完 数秒？"]
+    H --> I
+    I -->|はい| J["→ 5. HTTP/2 無効化"]
+    I -->|いいえ| K["→ 6. 重複拡張削除"]
+    J --> K
+    K --> L["完了"]
 ```
 
-- **GitHub Copilot** → 削除（Cursorと競合）
-- **その他のAI拡張** → 削除
-
-**ステップ6: HTTP/2をチェック**（企業プロキシ環境のみ）
-
-Cursor Tabが数秒かかる場合:
-
-```json
-{
-  "cursor.general.disableHttp2": true
-}
-```
+各設定の詳細は上記「やること7つ」を参照してください。
 
 ---
 
@@ -631,23 +554,12 @@ packages/backend-utils/**
 
 **効果**: インデックス時間 15分 → 4分
 
-### 小規模プロジェクト（~100ファイル）の場合
+### 規模別の目安
 
-`.cursorignore` は不要。以下だけで十分:
-
-1. Git統合オフ
-2. tsgo有効化（TypeScriptの場合）
-3. チャット履歴クリア
-
-### 大規模プロジェクト（1000+ファイル）の場合
-
-全部やる:
-
-1. `.cursorignore` 設定（最優先）
-2. Git統合オフ
-3. チャット履歴クリア
-4. tsgo有効化
-5. 重複拡張削除
+| 規模 | 推奨設定 |
+|:--|:--|
+| 小規模（~100ファイル） | Git統合オフ + tsgo + チャット履歴クリア |
+| 大規模（1000+ファイル） | 上記すべて + .cursorignore（最優先）+ 重複拡張削除 |
 
 ---
 
@@ -673,14 +585,8 @@ Cmd+Shift+P → "Cursor: Open Tab Logs"
 メモリ使用量が7GB超えた場合:
 
 1. Cursorを終了
-2. チャット履歴をクリア:
-   ```bash
-   rm -rf ~/Library/Application\ Support/Cursor/User/workspaceStorage/*/state.vscdb*
-   ```
-3. キャッシュをクリア:
-   ```bash
-   rm -rf ~/Library/Application\ Support/Cursor/Cache/*
-   ```
+2. 「3. Cursor固有の最適化」のチャット履歴クリアを実行
+3. キャッシュもクリア: `rm -rf ~/Library/Application\ Support/Cursor/Cache/*`
 4. Cursorを再起動
 
 ### エラー: "Indexing failed"

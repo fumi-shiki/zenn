@@ -129,7 +129,7 @@ timeline
 
 ### 2.1.1 Google AI Overviewsによるトラフィック影響
 
-2024年から2025年にかけて、Google AI Overviews（旧SGE）は検索体験を根本的に変化させた。68,000件の実際の検索クエリを追跡した研究では、AI要約が表示される場合のクリック率（CTR）が**46.7%減少**することが明らかになった[1]。
+2024年から2025年にかけて、Google AI Overviews（旧SGE）は検索体験を根本的に変化させた。Pew Research Centerの分析[1]では、AI検索がウェブトラフィックに与える影響が指摘されており、複数の調査でAI要約が表示される場合のクリック率（CTR）が大幅に減少することが報告されている。
 
 ゼロクリック検索（検索結果ページを離れずに完結する検索）の割合は、2024年5月の56%から2025年5月には**69%に増加**した[2]。2025年の最新データでは、AI Overviews表示時のゼロクリック率が**83%**に達し、オーガニッククリックは米国で**-38%**、グローバルで**-33%**減少した[3]。
 
@@ -141,7 +141,7 @@ ACM SIGKDD 2024で発表されたGEO（Generative Engine Optimization）[4]は�
 - **権威ある引用源（Authoritative Citations）**: +40%
 - **本文内引用（In-text Citations）**: +30-40%
 
-実際の運用例では、記事の引用率が**4ヶ月で340%、6ヶ月で400%増加**したケースが報告されている。この結果は、AIが「引用したくなる」構造化データと明確な情報提供が重要であることを示している。
+これらの結果は、AIが「引用したくなる」構造化データと明確な情報提供が重要であることを示している。
 
 ### 2.1.3 SEOからAIOへのパラダイムシフト
 
@@ -149,7 +149,7 @@ ACM SIGKDD 2024で発表されたGEO（Generative Engine Optimization）[4]は�
 
 | 観点 | SEO (1998-2024) | AIO (2025-) | エビデンス |
 |------|----------------|-------------|-----------|
-| **対象読者** | 人間 | 人間 + AIエージェント | AI要約表示率 50% → 75% (2028予測) |
+| **対象読者** | 人間 | 人間 + AIエージェント | ゼロクリック検索 69% (2025)[2] |
 | **最適化目的** | 検索順位向上 | AI引用率・応答品質向上 | GEO実装で引用率+40% |
 | **評価指標** | PV、CTR、滞在時間 | 引用率、設定適用成功率 | ゼロクリック検索 69% (2025) |
 | **最適化手法** | キーワード、バックリンク | 構造化データ、FAQ、診断フロー | - |
@@ -160,7 +160,7 @@ ACM SIGKDD 2024で発表されたGEO（Generative Engine Optimization）[4]は�
 
 2025年の技術文書カンファレンスでは、**Agentic AI**という概念が議論され始めた[5]。これは、単なるコンテンツ生成を超え、最小限の人間介入で定義された目標を自律的に追求するシステムである。
 
-業界予測では、**2026年末までにLLMクエリの70%が自律AIエージェントによって処理される**とされている。この予測が正しければ、技術文書の主要な読者はAIエージェントとなり、AIO最適化の重要性はさらに高まる。
+LLMクエリの多くが自律AIエージェントによって処理される方向に進んでおり、技術文書の主要な読者がAIエージェントとなる可能性が高まっている。この傾向が続けば、AIO最適化の重要性はさらに増す。
 
 ### 2.2.2 技術文書に求められる新しい要件
 
@@ -401,7 +401,7 @@ Q: GitHub CopilotとClaude Codeどちらを使うべき？
 2. **具体的なコマンド**: 「確認する」ではなく「`Cmd+Shift+P → "Show Extensions"`」
 3. **明確なフォールバック**: 各ステップで「問題なし → 次へ」のパスを用意
 
-この設計は、第2.5節で述べたAIコードアシスタントのアーキテクチャ分岐において、**エージェント型AI（Claude Code）が複数ステップの診断を自律的に実行できる**という実証結果に基づいている。
+この設計は、第2.2節で述べたAgentic AIの台頭を踏まえ、**エージェント型AI（Claude Code）が複数ステップの診断を自律的に実行できる**という前提に基づいている。
 
 ### 3.3.2 診断フローの形式化
 
@@ -635,9 +635,9 @@ troubleshooting:
 
 これらの手法を実際に適用した記事は、以下で公開されています:
 
-1. [【VSCode】IDEをぬるぬる動かす軽量化設定](https://zenn.dev/fumi-shiki/articles/vscode-performance-tuning-2026) - Visual Studio Codeのパフォーマンス最適化
-2. [【Cursor】重いAIエディタを軽くする7つの設定](https://zenn.dev/fumi-shiki/articles/cursor-performance-tuning-2026) - AIエディタCursorの軽量化
-3. [【Zed】で始めるAIエージェント開発環境構築](https://zenn.dev/fumi-shiki/articles/zed-editor-ai-agent-setup-2026) - Zed EditorとClaude Codeの統合環境
+1. [【VSCode】IDEをぬるぬる動かす軽量化設定](https://zenn.dev/fumi_shiki/articles/01-vscode-performance-tuning-2026) - Visual Studio Codeのパフォーマンス最適化
+2. [【Cursor】重いAIエディタを軽くする7つの設定](https://zenn.dev/fumi_shiki/articles/02-cursor-performance-tuning-2026) - AIエディタCursorの軽量化
+3. [【Zed】で始めるAIエージェント開発環境構築](https://zenn.dev/fumi_shiki/articles/03-zed-editor-ai-agent-setup-2026) - Zed EditorとClaude Codeの統合環境
 
 各記事には、本章で説明する人間向けセクション（FAQ、診断フロー）とAI向けセクション（YAML構造化データ）の両方が実装されています。AIエージェントが記事を読み取り、設定適用やトラブルシューティングを自律的に実行できるよう設計されています。
 
@@ -781,22 +781,14 @@ troubleshooting:
 
 # 5. Comparative Analysis
 
-```mermaid
-quadrantChart
-    title フォーマット・モデル比較マトリクス
-    x-axis 低AI解析性 --> 高AI解析性
-    y-axis 低人間可読性 --> 高人間可読性
-    quadrant-1 理想領域
-    quadrant-2 AI最適化
-    quadrant-3 改善必要
-    quadrant-4 人間最適化
-    YAML（分離モデル）: [0.85, 0.80]
-    JSON（分離モデル）: [0.90, 0.50]
-    Markdown（統合モデル）: [0.30, 0.75]
-    YAML（統合モデル）: [0.70, 0.60]
-```
-
 **図5: フォーマット・モデル比較マトリクス（人間可読性 × AI解析性）**
+
+| フォーマット × モデル | AI解析性 | 人間可読性 | 領域 |
+|---------------------|---------|-----------|------|
+| **YAML（分離モデル）** | ◎ 高 | ◎ 高 | **理想領域** |
+| JSON（分離モデル） | ◎ 高 | △ 中 | AI最適化 |
+| YAML（統合モデル） | ○ 中高 | ○ 中高 | 中間 |
+| Markdown（統合モデル） | △ 低 | ◎ 高 | 人間最適化 |
 
 ## 5.1 フォーマット比較: YAML vs JSON vs Markdown
 
@@ -934,7 +926,7 @@ graph TD
     subgraph "トレードオフの解決"
         T1[学習コスト増加]
         T2[品質向上]
-        T3[AI応答精度 +40%]
+        T3[AI引用率 +40%]
         T4[保守コスト増加<br/>vs<br/>ユーザー価値増大]
     end
 
@@ -1085,7 +1077,7 @@ AI エージェントが技術文書を解析・理解する時代において�
 
 ## B. AIエージェントの進化（2.2節関連）
 
-5. Society for Technical Communication. (2025). *Agentic AI and the Future of Technical Documentation*. Conference Proceedings. Retrieved from https://www.stc.org/
+5. Society for Technical Communication. (2025). *STC Summit 2025: Agentic AI and Technical Communication*. Retrieved from https://summit.stc.org/
 
 ## C. 構造化データとLLM（2.3節関連）
 
@@ -1099,7 +1091,7 @@ AI エージェントが技術文書を解析・理解する時代において�
 
 ## Acknowledgments
 
-この記事は、Zenn プラットフォームにおける実際の記事執筆（VSCode、Cursor、Zed最適化記事）を通じて得られた知見に基づいています。記事を読んでフィードバックを提供してくださった読者の皆様、およびAIエージェントとして記事を活用してくださったClaude Code、ChatGPTのユーザーの皆様に感謝いたします。
+この記事は、Zenn プラットフォームにおける実際の記事執筆（VSCode、Cursor、Zed最適化記事）を通じて得られた知見に基づいています。
 
 ---
 

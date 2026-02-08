@@ -67,7 +67,7 @@ VSCodeのGit統合、便利なんですけど裏で常にリポジトリを監�
 
 **なんで速いの？**
 - 従来のtsserverはJavaScript（Node.js）→ シングルスレッド、GCが重い
-- tsgoはGo製のネイティブバイナリ → マルチスレッド、GCなし、メモリ効率◎
+- tsgoはGo製のネイティブバイナリ → マルチスレッド、コンパイル済みネイティブコード、メモリ効率◎
 
 ```json
 {
@@ -117,13 +117,17 @@ VSCodeのGit統合、便利なんですけど裏で常にリポジトリを監�
 | Pylance | 265ms | Python不使用なら削除 |
 | Claude Code | 88ms | 軽量、残してOK |
 
+*Activation時間は M1 MacBook Air 16GB での実測値*
+
 :::message
 **確認方法**: `Cmd+Shift+P` → 「Developer: Show Running Extensions」で各拡張機能の起動時間とCPU使用率が見れます。
 :::
 
-**AI補完の代替:**
-- Claude Code（88ms、軽い）
-- Codex（53ms、もっと軽い）
+**AI補完の代替（M1 Air 実測値）:**
+- Claude Code（88ms）
+- Codex（53ms）
+
+Copilot の 1.6秒超と比べると桁が違います。
 
 ### 4. ファイル監視を減らす
 
@@ -309,67 +313,25 @@ Cmd+Shift+P → "Developer: Show Running Extensions"
 
 ## VSCodeが遅い場合の診断フロー
 
-**ステップ1: 起動時間をチェック**
-
-VSCodeの起動時間を確認:
-
-- **10秒以下** → ステップ2へ
-- **10秒以上** → 重い拡張機能を確認
-  ```
-  Cmd+Shift+P → "Developer: Show Running Extensions"
-  ```
-  - 1秒以上かかっている拡張機能を無効化
-
-**ステップ2: Git操作をチェック**
-
-ファイル保存時のフリーズを確認:
-
-- **3秒以上固まる** → Git統合をオフ
-  ```json
-  {
-    "git.enabled": false,
-    "gitlens.enabled": false
-  }
-  ```
-- **問題なし** → ステップ3へ
-
-**ステップ3: TypeScript型チェック**
-
-TypeScriptプロジェクトの場合:
-
-- **遅い** → tsgo を有効化（7-10x高速化）
-  ```json
-  {
-    "typescript.experimental.useTsgo": true
-  }
-  ```
-
-**ステップ4: ファイルツリー描画**
-
-ファイルツリーの展開が遅い場合:
-
-- `node_modules`, `dist`, `build` を除外
-  ```json
-  {
-    "files.watcherExclude": {
-      "**/node_modules/**": true,
-      "**/dist/**": true,
-      "**/build/**": true,
-      "**/.git/objects/**": true
-    }
-  }
-  ```
-
-**ステップ5: 拡張機能をチェック**
-
-重複するAI拡張を確認:
-
-```
-Cmd+Shift+P → "Extensions: Show Installed Extensions"
+```mermaid
+graph TD
+    A["起動が遅い？"] -->|10秒以上| B["Show Running Extensions で確認"]
+    A -->|10秒以下| C["保存時フリーズ？"]
+    B --> B1["1秒超の拡張を無効化"]
+    B1 --> C
+    C -->|3秒以上| D["→ 1. Git統合をオフ"]
+    C -->|問題なし| E["TS型チェック遅い？"]
+    D --> E
+    E -->|遅い| F["→ 2. tsgo 有効化"]
+    E -->|問題なし| G["ファイルツリー遅い？"]
+    F --> G
+    G -->|遅い| H["→ 4. watcherExclude 設定"]
+    G -->|問題なし| I["→ 3. 重い拡張を消す"]
+    H --> I
+    I --> J["完了"]
 ```
 
-- **GitHub Copilot** → 削除（Claude Code/Codexで代替）
-- **使っていない言語サーバー** → 削除（例: Pylanceを使わないなど）
+各設定の詳細は上記「やること4つ」を参照してください。
 
 ---
 
@@ -398,23 +360,12 @@ Cmd+Shift+P → "Extensions: Show Installed Extensions"
 }
 ```
 
-### 小規模プロジェクト（~100ファイル）の場合
+### 規模別の目安
 
-最小限の設定で十分:
-
-1. Git統合オフ
-2. tsgo有効化（TypeScriptの場合）
-3. 重複拡張削除
-
-### 大規模プロジェクト（1000+ファイル）の場合
-
-全部やる:
-
-1. Git統合オフ
-2. ファイルウォッチャー除外
-3. tsgo有効化
-4. 重複拡張削除
-5. タブ上限を8枚に制限
+| 規模 | 推奨設定 |
+|:--|:--|
+| 小規模（~100ファイル） | Git統合オフ + tsgo + 重複拡張削除 |
+| 大規模（1000+ファイル） | 上記すべて + watcherExclude + タブ上限8枚 |
 
 ---
 
@@ -449,20 +400,7 @@ tsgoが誤動作している可能性。
 
 ### エラー: ファイル保存時に数秒固まる
 
-Git統合が原因。
-
-**対処法:**
-
-Git統合を無効化:
-
-```json
-{
-  "git.enabled": false,
-  "gitlens.enabled": false
-}
-```
-
-代わりにjjをターミナルから使う。
+Git統合が原因。上記「1. Git統合をオフにして、jjに乗り換える」の設定を適用してください。
 
 ---
 
